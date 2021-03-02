@@ -9,35 +9,29 @@ class NewPost extends Component {
     author: "",
   };
 
-  setPostHandler = () => {
-    const data = {
-      title: this.state.title,
-      content: this.state.content,
-      author: this.state.author,
-    };
+  setPostHandler = async () => {
+    try {
+      const newPostData = {
+        title: this.state.title,
+        content: this.state.content,
+        author: this.state.author,
+      };
 
-    const postData = async function (url, data) {
-      try {
-        const options = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        };
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPostData),
+      };
 
-        const post = await fetch(url, options);
-        // const jsonData = post.json();
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts/", options);
 
-        return post;
-      } catch (err) {
-        alert("💥💥💥" + err);
-      }
-    };
-
-    postData("https://jsonplaceholder.typicode.com/posts/", data).then((dataSent) => {
-      console.log(dataSent);
-    });
+      console.log(res);
+      console.log("ASYNC --- POSTING POST ---");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   render() {

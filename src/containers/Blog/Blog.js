@@ -9,29 +9,29 @@ class Blog extends Component {
   state = {
     posts: [],
     selectedPost: null,
+    error: false,
   };
 
-  componentDidMount() {
-    const getPosts = async function () {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-        const data = await res.json();
-        const dataShortened = data.slice(0, 4);
-        const updatedData = dataShortened.map((element) => {
-          return {
-            ...element,
-            author: "Jaenn",
-          };
-        });
+  async componentDidMount() {
+    try {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts ");
+      if (!res.ok) throw new Error("Failed to fetch...");
 
-        // returning data so it can be used outside of func block and setState can be used
-        return updatedData;
-      } catch (err) {
-        alert(err);
-      }
-    };
+      const data = await res.json();
+      const dataShortened = data.slice(0, 4);
+      const updatedData = dataShortened.map((element) => {
+        return {
+          ...element,
+          author: "Jaenn",
+        };
+      });
 
-    getPosts().then((postsArr) => this.setState({ posts: postsArr }));
+      this.setState({ posts: updatedData });
+      console.log("ASYNC --- FETCHING DATA FROM SERVER ---");
+    } catch (err) {
+      this.setState({ error: true });
+      console.log(err);
+    }
   }
 
   selectedPost = (id) => {
@@ -39,16 +39,22 @@ class Blog extends Component {
   };
 
   render() {
-    const posts = this.state.posts.map((post) => {
-      return (
-        <Post
-          title={post.title}
-          key={post.id}
-          author={post.author}
-          clicked={() => this.selectedPost(post.id)}
-        />
-      );
-    });
+    let posts = (
+      <p style={{ textAlign: "center" }}>FAILED TO FETCH... PLEASE TRY AGAIN</p>
+    );
+
+    if (!this.state.error) {
+      posts = this.state.posts.map((post) => {
+        return (
+          <Post
+            title={post.title}
+            key={post.id}
+            author={post.author}
+            clicked={() => this.selectedPost(post.id)}
+          />
+        );
+      });
+    }
 
     return (
       <div>
